@@ -1,0 +1,71 @@
+DROP DATABASE TRANSACOES_DESAFIO;
+CREATE DATABASE TRANSACOES_DESAFIO;
+USE TRANSACOES_DESAFIO;
+
+-- Criação da Tabela Usuarios
+CREATE TABLE Usuarios (
+    IDUSUARIO INT PRIMARY KEY AUTO_INCREMENT,
+    NomeCompleto VARCHAR(255),
+    CPFCNPJ VARCHAR(20) UNIQUE,
+    Email VARCHAR(255) UNIQUE,
+    Senha VARCHAR(255),
+    TipoUsuario VARCHAR(10)
+);
+
+-- Criação da Tabela Carteiras
+CREATE TABLE Carteiras (
+    ID_USUARIO INT PRIMARY KEY,
+    Saldo DECIMAL(10, 2),
+    CONSTRAINT FK_CARTEIRAS_USUARIOS FOREIGN KEY (ID_USUARIO) REFERENCES Usuarios(IDUSUARIO)
+);
+
+-- Criação da Tabela Lojistas
+CREATE TABLE Lojistas (
+    ID_USUARIO INT PRIMARY KEY,
+    CONSTRAINT FK_LOJISTAS_USUARIOS FOREIGN KEY (ID_USUARIO) REFERENCES Usuarios(IDUSUARIO)
+);
+
+-- Criação da Tabela Transferencias
+CREATE TABLE Transferencias (
+    IDTRANSFERENCIA INT PRIMARY KEY AUTO_INCREMENT,
+    ID_USUARIO_REMETENTE INT,
+    ID_USUARIO_DESTINATARIO INT,
+    Valor DECIMAL(10, 2),
+    Status VARCHAR(50),
+    Data TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT FK_TRANSFERENCIAS_REMETENTE FOREIGN KEY (ID_USUARIO_REMETENTE) REFERENCES Usuarios(IDUSUARIO),
+    CONSTRAINT FK_TRANSFERENCIAS_DESTINATARIO FOREIGN KEY (ID_USUARIO_DESTINATARIO) REFERENCES Usuarios(IDUSUARIO) -- Ou Lojistas(ID), dependendo do destinatário
+);
+
+-- Criação da Tabela Notificacoes
+CREATE TABLE Notificacoes (
+    IDNOTIFICACOES INT PRIMARY KEY AUTO_INCREMENT,
+    ID_USUARIO INT,
+    Tipo VARCHAR(50),
+    Status VARCHAR(50),
+    CONSTRAINT FK_NOTIFICACOES_USUARIOS FOREIGN KEY (ID_USUARIO) REFERENCES Usuarios(IDUSUARIO) -- Ou Lojistas(ID), dependendo do destinatário da notificação
+);
+
+
+-- Inserção do primeiro usuário como COMUM
+INSERT INTO 
+	Usuarios (NomeCompleto, CPFCNPJ, Email, Senha, TipoUsuario) 
+		VALUES ('Fulano de Tal', '12345678901', 'fulano@email.com', 'senha123', 'COMUM');
+
+INSERT INTO 
+	Carteiras (ID_USUARIO, Saldo) 
+		VALUES (1, 1000.0);
+
+-- Inserção do segundo usuário como COMUM
+INSERT INTO 
+	Usuarios (NomeCompleto, CPFCNPJ, Email, Senha, TipoUsuario) 
+		VALUES ('Ciclano da Silva', '98765432101', 'ciclano@email.com', 'outrasenha456', 'COMUM');
+
+INSERT INTO 
+	Carteiras (ID_USUARIO, Saldo) 
+		VALUES (2, 800.0);
+		
+
+
+
+
